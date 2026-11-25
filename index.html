@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ashwin Biju — Cloud Infrastructure, Linux Systems &amp; Security Engineering.">
+  <meta name="author" content="Ashwin Biju">
+  <meta name="theme-color" content="#050505">
+  <title>Ashwin Biju &mdash; Cloud &amp; Systems Engineer</title>
+
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Subtle Film Grain -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- ══════════ CONTINUOUS INFINITE AURORA & DEVOPS MESH BACKDROP ══════════ -->
+  <div class="ambient-aurora" aria-hidden="true">
+    <div class="aurora-orb orb-1"></div>
+    <div class="aurora-orb orb-2"></div>
+    <div class="aurora-orb orb-3"></div>
+  </div>
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+
+  <!-- ══════════ CUSTOM CURSOR (PRECISION KINETIC RETICLE) ══════════ -->
+  <div class="cursor-wrap" id="cursor-wrap" aria-hidden="true">
+    <div class="cursor-aura" id="cursor-aura"></div>
+    <div class="cursor-reticle" id="cursor-reticle">
+      <span class="c-bracket c-tl"></span>
+      <span class="c-bracket c-tr"></span>
+      <span class="c-bracket c-bl"></span>
+      <span class="c-bracket c-br"></span>
+    </div>
+    <div class="cursor-core" id="cursor-core"></div>
+  </div>
+
+  <!-- ══════════ PRELOADER ══════════ -->
+  <div class="preloader" id="preloader">
+    <div class="preloader-inner">
+      <div class="pre-line"></div>
+      <span class="pre-text">LOADING</span>
+      <div class="pre-counter" id="pre-counter">0</div>
+    </div>
+  </div>
+
+  <!-- ══════════ CONTINUOUS LEFT-EDGE PIPELINE RAIL ══════════ -->
+  <aside class="scroll-rail hide-sm" aria-label="Scroll progress pipeline">
+    <div class="rail-track">
+      <div class="rail-fill" id="rail-fill"></div>
+    </div>
+    <a href="#hero-stage-wrap" class="rail-node active" data-rail="0"><span>00</span></a>
+    <a href="#craft" class="rail-node" data-rail="1"><span>01</span></a>
+    <a href="#works" class="rail-node" data-rail="2"><span>02</span></a>
+    <a href="#trajectory" class="rail-node" data-rail="3"><span>03</span></a>
+    <a href="#contact" class="rail-node" data-rail="4"><span>04</span></a>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════════
+       MINIMAL ARCHITECTURAL TOP BAR
+  ═══════════════════════════════════════════════════ -->
+  <header class="top-bar">
+    <a href="#hero-stage-wrap" class="tb-brand">
+      <span class="tb-mark">AB</span>
+      <span class="tb-sep">//</span>
+      <span class="tb-title">SYSTEMS.26</span>
+    </a>
+
+    <nav class="tb-links hide-sm" aria-label="Primary navigation">
+      <a href="#craft" data-sec="craft">01 About</a>
+      <a href="#works" data-sec="works">02 Works</a>
+      <a href="#trajectory" data-sec="trajectory">03 Trajectory</a>
+      <a href="#contact" data-sec="contact">04 Contact</a>
+    </nav>
+
+    <div class="tb-right">
+      <div class="tb-status hide-sm">
+        <span class="pulse-dot"></span>
+        <span id="live-clock">18:00 IST</span>
+      </div>
+      <button class="cmd-trigger" id="cmd-trigger" type="button" aria-label="Open Command Palette">
+        <span>CMD</span>
+        <kbd>&#8984;K</kbd>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════
+       COMMAND PALETTE MODAL (⌘K)
+  ═══════════════════════════════════════════════════ -->
+  <div class="cmd-backdrop" id="cmd-backdrop" aria-hidden="true">
+    <div class="cmd-modal" role="dialog" aria-modal="true" aria-label="Command Palette">
+      <div class="cmd-input-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="cmd-input" placeholder="Type a command or jump to section..." autocomplete="off">
+        <kbd>ESC</kbd>
+      </div>
+      <div class="cmd-list" id="cmd-list">
+        <button class="cmd-item active" data-action="scroll" data-target="#hero-stage-wrap"><span>00 // Matrix Portrait Hero</span><kbd>HERO</kbd></button>
+        <button class="cmd-item" data-action="scroll" data-target="#craft"><span>01 // About &amp; Core Stack</span><kbd>ABOUT</kbd></button>
+        <button class="cmd-item" data-action="scroll" data-target="#works"><span>02 // Interactive Case Studies</span><kbd>WORKS</kbd></button>
+        <button class="cmd-item" data-action="scroll" data-target="#trajectory"><span>03 // Scroll-Drawn Trajectory</span><kbd>PATH</kbd></button>
+        <button class="cmd-item" data-action="scroll" data-target="#contact"><span>04 // Initiate Handshake</span><kbd>MAIL</kbd></button>
+        <button class="cmd-item" data-action="copy" data-value="ashcreations218@gmail.com"><span>Copy Email (ashcreations218@gmail.com)</span><kbd>COPY</kbd></button>
+        <button class="cmd-item" data-action="link" data-url="https://github.com/ashwinbiju"><span>Open GitHub Profile</span><kbd>&nearr;</kbd></button>
+        <button class="cmd-item" data-action="link" data-url="https://linkedin.com/in/ashwinbiju"><span>Open LinkedIn Profile</span><kbd>&nearr;</kbd></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       00 // MATRIX PARTICLE PORTRAIT HERO (KEPT INTACT)
+  ═══════════════════════════════════════════════════ -->
+  <div class="hero-stage-wrap" id="hero-stage-wrap">
+    <section class="hero" id="hero">
+      <canvas id="particle-canvas"></canvas>
+
+      <div class="hero-text" id="hero-text">
+        <div class="hero-name-row">
+          <span class="hero-first">ASHWIN</span>
+          <span class="hero-last">BIJU</span>
+        </div>
+        <div class="hero-tagline">
+          <span class="tag-line">Cloud Infrastructure</span>
+          <span class="tag-sep">&mdash;</span>
+          <span class="tag-line">Systems Engineering</span>
+        </div>
+      </div>
+
+      <div class="scroll-indicator" id="scroll-indicator">
+        <div class="scroll-line"></div>
+        <span>SCROLL TO ASSEMBLE</span>
+      </div>
+
+      <div class="corner-info corner-tl">
+        <span class="ci-label">PORTFOLIO</span>
+        <span class="ci-val">2026</span>
+      </div>
+      <div class="corner-info corner-tr">
+        <span class="ci-label">STATUS</span>
+        <span class="ci-val"><span class="status-dot"></span>AVAILABLE</span>
+      </div>
+      <div class="corner-info corner-bl">
+        <span class="ci-label">LOCATION</span>
+        <span class="ci-val">KERALA, INDIA</span>
+      </div>
+      <div class="corner-info corner-br">
+        <span class="ci-label">FOCUS</span>
+        <span class="ci-val">DEVOPS &bull; AWS &bull; LINUX</span>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════
+       01 // ABOUT & ARCHITECTURE PIPELINE (REVEALS FROM INFINITY)
+  ═══════════════════════════════════════════════════ -->
+  <section id="craft" class="section about-arch-section">
+    <div class="container">
+      <div class="section-index-row">
+        <span class="kicker scramble-text" data-text="01 // ABOUT &amp; ARCHITECTURE">01 // ABOUT &amp; ARCHITECTURE</span>
+        <span class="coord-tag">END-TO-END SYSTEMS FLOW</span>
+      </div>
+
+      <div class="briefing-head">
+        <h2 class="editorial-heading blur-words">
+          From first commit to live cloud traffic.
+        </h2>
+        <p class="briefing-copy">
+          I&rsquo;m <strong>Ashwin Biju</strong> &mdash; a systems-minded engineer from Kerala who turns raw code into quiet, self-healing infrastructure. Hover or tap any node below to trace how my stack connects.
+        </p>
+      </div>
+
+      <!-- Interactive 6-Node Architecture Diagram (Reveals from Infinite Depth) -->
+      <div class="arch-diagram-wrap" id="arch-diagram-wrap">
+        <svg class="arch-svg-lines hide-sm" viewBox="0 0 1000 320" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="pipeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.75"/>
+              <stop offset="50%" stop-color="#818cf8" stop-opacity="0.75"/>
+              <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.75"/>
+            </linearGradient>
+          </defs>
+          <!-- Serpentine path connecting 01->02->03->04->05->06 -->
+          <path id="arch-pipe-bg" d="M 160 72 L 500 72 L 840 72 C 920 72, 920 248, 840 248 L 500 248 L 160 248" fill="none" stroke="rgba(148,163,184,0.14)" stroke-width="1.5"/>
+          <path id="arch-pipe-progress" d="M 160 72 L 500 72 L 840 72 C 920 72, 920 248, 840 248 L 500 248 L 160 248" fill="none" stroke="url(#pipeGrad)" stroke-width="2.5" stroke-linecap="round"/>
+          <path id="arch-pipe-glow" d="M 160 72 L 500 72 L 840 72 C 920 72, 920 248, 840 248 L 500 248 L 160 248" fill="none" stroke="url(#pipeGrad)" stroke-width="2" stroke-dasharray="10 22" opacity="0.45"/>
+        </svg>
+
+        <div class="arch-nodes-grid" id="arch-nodes-grid">
+          <button class="arch-node active" data-node="git" type="button">
+            <span class="an-step">01 // SOURCE</span>
+            <strong class="an-title">Git</strong>
+            <small class="an-sub">Versioned &amp; audited commits</small>
+          </button>
+
+          <button class="arch-node" data-node="docker" type="button">
+            <span class="an-step">02 // PACKAGE</span>
+            <strong class="an-title">Docker</strong>
+            <small class="an-sub">Immutable container images</small>
+          </button>
+
+          <button class="arch-node" data-node="k8s" type="button">
+            <span class="an-step">03 // ORCHESTRATE</span>
+            <strong class="an-title">Kubernetes</strong>
+            <small class="an-sub">Self-healing cluster scale</small>
+          </button>
+
+          <button class="arch-node" data-node="linux" type="button">
+            <span class="an-step">06 // KERNEL</span>
+            <strong class="an-title">Linux</strong>
+            <small class="an-sub">Hardened Ubuntu &amp; systemd</small>
+          </button>
+
+          <button class="arch-node" data-node="net" type="button">
+            <span class="an-step">05 // ROUTE</span>
+            <strong class="an-title">Networking</strong>
+            <small class="an-sub">CIDR /24 subnets &amp; SSH</small>
+          </button>
+
+          <button class="arch-node" data-node="aws" type="button">
+            <span class="an-step">04 // CLOUD</span>
+            <strong class="an-title">AWS</strong>
+            <small class="an-sub">Elastic EC2, S3 &amp; EBS</small>
+          </button>
+        </div>
+
+        <!-- Live Unifying Architecture Sentence -->
+        <div class="arch-sentence" id="arch-sentence">
+          Every <span class="as-hl active" data-for="git">Git</span> push packages into <span class="as-hl" data-for="docker">Docker</span> containers, orchestrated by <span class="as-hl" data-for="k8s">Kubernetes</span> on <span class="as-hl" data-for="aws">AWS</span>, routed across <span class="as-hl" data-for="net">Networking</span> /24 subnets on hardened <span class="as-hl" data-for="linux">Linux</span>.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       02 // SELECTED WORKS — STICKY SPLIT TELEMETRY STAGE
+  ═══════════════════════════════════════════════════ -->
+  <section id="works" class="section works-section">
+    <div class="container">
+      <div class="section-index-row">
+        <span class="kicker scramble-text" data-text="02 // SELECTED CASE STUDIES">02 // SELECTED CASE STUDIES</span>
+        <span class="coord-tag">PRODUCTION &amp; LAB BUILDS</span>
+      </div>
+
+      <div class="works-stage">
+        <!-- Case Study 01 -->
+        <article class="case-row" data-case="01">
+          <div class="case-narrative">
+            <div class="case-num-badge">01 / SECURITY ENGINE</div>
+            <h3 class="case-title">Secure Flow</h3>
+            <p class="case-desc">
+              Real-time malicious advertisement and redirect protection engine. Fuses client-side <strong>TensorFlow.js</strong> classification with <strong>Google Safe Browsing</strong> and <strong>VirusTotal APIs</strong>, enforcing zero-latency blocks via Chrome's Declarative Net Request (DNR) API.
+            </p>
+            <div class="case-stack">
+              <span>JavaScript</span><span>TensorFlow.js</span><span>Chrome DNR</span><span>VirusTotal</span>
+            </div>
+            <button class="btn-sim" id="sim-secureflow" type="button">
+              <span class="pulse-dot"></span> Simulate Threat Intercept
+            </button>
+          </div>
+
+          <div class="case-visual tilt-stage">
+            <div class="stage-scanline"></div>
+            <div class="stage-top">
+              <span class="stage-url">chrome://extensions/secure-flow</span>
+              <span class="stage-badge" id="sf-badge">SHIELD ARMED</span>
+            </div>
+            <div class="stage-grid">
+              <div class="stage-kv"><small>ENGINE</small><strong>Manifest V3 + DNR</strong></div>
+              <div class="stage-kv"><small>INFERENCE</small><strong>TensorFlow.js Local</strong></div>
+              <div class="stage-kv"><small>INTEL FEED</small><strong>SafeBrowsing + VT</strong></div>
+              <div class="stage-kv"><small>LATENCY</small><strong>&lt; 2ms Block</strong></div>
+            </div>
+            <div class="stage-log" id="sf-log">&gt; Awaiting navigation telemetry...</div>
+          </div>
+        </article>
+
+        <!-- Case Study 02 -->
+        <article class="case-row" data-case="02">
+          <div class="case-narrative">
+            <div class="case-num-badge">02 / CLOUD INFRASTRUCTURE</div>
+            <h3 class="case-title">Cloud Lab Sandbox</h3>
+            <p class="case-desc">
+              End-to-end infrastructure lab covering AWS EC2 Linux provisioning, SSH key-pair hardening, EBS &amp; S3 storage architecture, <code>systemd</code> daemon management, Docker containerization, and <code>/24</code> CIDR subnetting.
+            </p>
+            <div class="case-stack">
+              <span>AWS EC2</span><span>S3 &amp; EBS</span><span>Docker</span><span>systemd</span><span>CIDR /24</span>
+            </div>
+            <button class="btn-sim" id="sim-cloudlab" type="button">
+              <span class="pulse-dot"></span> Run Node Healthcheck
+            </button>
+          </div>
+
+          <div class="case-visual tilt-stage">
+            <div class="stage-scanline"></div>
+            <div class="stage-top">
+              <span class="stage-url">ssh ubuntu@ec2-ap-south-1</span>
+              <span class="stage-badge" id="cl-badge">EC2 HEALTHY</span>
+            </div>
+            <div class="stage-grid">
+              <div class="stage-kv"><small>SYSTEMD</small><strong>nginx.service active</strong></div>
+              <div class="stage-kv"><small>SUBNET</small><strong>192.168.10.0/24</strong></div>
+              <div class="stage-kv"><small>CONTAINERS</small><strong>Docker Hub Alpine</strong></div>
+              <div class="stage-kv"><small>STORAGE</small><strong>EBS + S3 Synced</strong></div>
+            </div>
+            <div class="stage-log" id="cl-log">&gt; Ready for diagnostic probe...</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       03 // TRAJECTORY — SCROLL-DRAWN LUMINOUS SPINE
+  ═══════════════════════════════════════════════════ -->
+  <section id="trajectory" class="section trajectory-section">
+    <div class="container">
+      <div class="section-index-row">
+        <span class="kicker scramble-text" data-text="03 // CAREER TRAJECTORY">03 // CAREER TRAJECTORY</span>
+        <span class="coord-tag">2020 &mdash; 2026</span>
+      </div>
+
+      <h2 class="editorial-heading traj-title blur-words">
+        Forged through systems &amp; sprints.
+      </h2>
+
+      <div class="spine-wrap" id="spine-wrap">
+        <div class="spine-track">
+          <div class="spine-beam" id="spine-beam"></div>
+        </div>
+
+        <div class="spine-item">
+          <div class="spine-node"></div>
+          <div class="spine-year">2026</div>
+          <div class="spine-content">
+            <span class="spine-tag">DEGREE</span>
+            <h3>B.Tech in Computer Science &amp; Engineering</h3>
+            <p class="spine-org">Nehru College of Engineering &amp; Research Centre (KTU)</p>
+            <p class="spine-desc">Core foundations in operating systems, computer networks, database systems, and applied DevOps/cloud infrastructure engineering.</p>
+          </div>
+        </div>
+
+        <div class="spine-item">
+          <div class="spine-node"></div>
+          <div class="spine-year">2025</div>
+          <div class="spine-content">
+            <span class="spine-tag">INTERNSHIP</span>
+            <h3>Python &amp; Machine Learning Intern</h3>
+            <p class="spine-org">Revertech IT Solutions &bull; Kochi</p>
+            <p class="spine-desc">Intensive engineering sprint focused on Python automation workflows, introductory machine learning pipelines, and practical model applications.</p>
+          </div>
+        </div>
+
+        <div class="spine-item">
+          <div class="spine-node"></div>
+          <div class="spine-year">2024</div>
+          <div class="spine-content">
+            <span class="spine-tag">INTERNSHIP</span>
+            <h3>Advanced Python Programming Intern</h3>
+            <p class="spine-org">Genzebe Technologies LLP &bull; Kochi</p>
+            <p class="spine-desc">Hands-on training dedicated to advanced Python patterns, clean code architecture, and structured algorithmic problem-solving.</p>
+          </div>
+        </div>
+
+        <div class="spine-item">
+          <div class="spine-node"></div>
+          <div class="spine-year">2022</div>
+          <div class="spine-content">
+            <span class="spine-tag">FOUNDATION</span>
+            <h3>Higher Secondary &amp; High School</h3>
+            <p class="spine-org">Chaldean Syrian HSS &amp; Vivekodayam Boys HSS &bull; Thrissur</p>
+            <p class="spine-desc">Completed Plus Two (2022) and SSLC (2020) with strong analytical grounding in mathematics, physics, and early computing.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       04 // CONTACT — MINIMAL CENTERED STAGE
+  ═══════════════════════════════════════════════════ -->
+  <section id="contact" class="section contact-section">
+    <div class="contact-horizon" aria-hidden="true"></div>
+    <div class="container contact-minimal-wrap">
+      <div class="section-index-row">
+        <span class="kicker scramble-text" data-text="04 // GET IN TOUCH">04 // GET IN TOUCH</span>
+        <span class="shiny-chip"><span class="pulse-dot"></span> AVAILABLE FOR ROLES</span>
+      </div>
+
+      <h2 class="editorial-heading blur-words">
+        Let&rsquo;s build something quiet, fast &amp; unbreakable.
+      </h2>
+
+      <p class="contact-minimal-sub">
+        Open to Cloud Infrastructure, DevOps &amp; Linux Systems Engineering opportunities.
+      </p>
+
+      <div class="contact-primary-cta">
+        <a href="mailto:ashcreations218@gmail.com" class="direct-email-link magnetic" id="direct-email-link">
+          <span class="del-text">ashcreations218@gmail.com</span>
+          <span class="del-arrow">&nearr;</span>
+        </a>
+
+        <div class="cl-actions">
+          <a href="mailto:ashcreations218@gmail.com?subject=Engineering%20Inquiry" class="btn-dispatch-now magnetic">
+            <span>Send Email</span>
+          </a>
+          <button class="btn-copy-email magnetic" id="copy-email-btn" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span>Copy Address</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="contact-links-row">
+        <a href="https://github.com/ashwinbiju" target="_blank" rel="noopener noreferrer" class="contact-pill">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+          <span>GitHub</span>
+        </a>
+        <a href="https://linkedin.com/in/ashwinbiju" target="_blank" rel="noopener noreferrer" class="contact-pill">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+          <span>LinkedIn</span>
+        </a>
+        <a href="tel:+918078591435" class="contact-pill">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>+91 8078591435</span>
+        </a>
+        <span class="contact-pill contact-pill-static">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+          <span>Kerala, India</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       SIMPLE MINIMAL FOOTER
+  ═══════════════════════════════════════════════════ -->
+  <footer class="footer" id="footer">
+    <div class="container footer-minimal">
+      <span class="fm-copy">&copy; 2026 Ashwin Biju</span>
+      <span class="fm-note">Cloud Infrastructure &amp; Linux Systems</span>
+      <button class="btn-top-mini magnetic" id="btn-back-to-top" type="button" aria-label="Back to Top">
+        <span>Top</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════
+       MACOS / BEUI PHYSICS DOCK
+  ═══════════════════════════════════════════════════ -->
+  <nav class="dock-wrap" aria-label="Quick navigation dock">
+    <div class="dock" id="dock">
+      <a class="dock-item" href="#hero-stage-wrap" data-tip="Portrait">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      </a>
+      <a class="dock-item" href="#craft" data-tip="Craft">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+      </a>
+      <a class="dock-item" href="#works" data-tip="Works">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      </a>
+      <a class="dock-item" href="#trajectory" data-tip="Trajectory">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </a>
+      <a class="dock-item" href="#contact" data-tip="Contact">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      </a>
+    </div>
+  </nav>
+
+  <div class="toast" id="toast">Copied to clipboard</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+
+  <script src="js/ambient.js" defer></script>
+  <script src="js/particles.js"></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/cursor.js" defer></script>
+
+</body>
+</html>
