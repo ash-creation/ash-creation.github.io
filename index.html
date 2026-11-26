@@ -5,22 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Ashwin Biju — Cloud Infrastructure, Linux Systems &amp; Security Engineering.">
   <meta name="author" content="Ashwin Biju">
-  <meta name="theme-color" content="#F4F6F8">
+  <meta name="theme-color" content="#0B0D11">
   <title>Ashwin Biju — Cloud &amp; Systems Engineer</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="theme-light">
+<body>
 
-  <!-- Header -->
+  <!-- Minimal Curtain Preloader -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader-inner">
+      <span class="pre-name">Ashwin Biju</span>
+      <span class="pre-count mono" id="pre-counter">000</span>
+    </div>
+  </div>
+
+  <!-- Quiet Editorial Header -->
   <header class="site-header" id="site-header">
     <a href="#hero" class="brand-mark">Ashwin Biju</a>
 
     <nav class="header-nav hide-sm" aria-label="Primary navigation">
+      <a href="#about" data-sec="about">About</a>
       <a href="#works" data-sec="works">Work</a>
       <a href="#architecture" data-sec="architecture">Systems</a>
       <a href="#trajectory" data-sec="trajectory">History</a>
@@ -34,13 +43,7 @@
         <span class="meta-sep">/</span>
         <span id="live-clock" class="mono">18:00 IST</span>
       </span>
-
-      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle color theme" title="Toggle theme">
-        <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-        <svg id="theme-icon-sun" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-      </button>
-
-      <button class="cmd-btn" id="cmd-trigger" type="button" aria-label="Open command menu">
+      <button class="cmd-btn" id="cmd-trigger" type="button" aria-label="Open Command Menu">
         <span>Menu</span>
         <kbd>⌘K</kbd>
       </button>
@@ -49,112 +52,194 @@
 
   <!-- Command Palette (⌘K) -->
   <div class="cmd-backdrop" id="cmd-backdrop" aria-hidden="true">
-    <div class="cmd-modal" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="cmd-modal" role="dialog" aria-modal="true" aria-label="Command Palette">
       <div class="cmd-input-wrap">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="text" id="cmd-input" placeholder="Search" autocomplete="off">
+        <input type="text" id="cmd-input" placeholder="Search sections or actions" autocomplete="off">
         <kbd>ESC</kbd>
       </div>
       <div class="cmd-list" id="cmd-list">
-        <button class="cmd-item active" data-action="scroll" data-target="#hero"><span>Overview</span><kbd>01</kbd></button>
-        <button class="cmd-item" data-action="scroll" data-target="#works"><span>Selected Builds — Secure Flow &amp; Cloud Lab</span><kbd>02</kbd></button>
-        <button class="cmd-item" data-action="scroll" data-target="#architecture"><span>Systems Architecture — 6-Stage Flow</span><kbd>03</kbd></button>
-        <button class="cmd-item" data-action="scroll" data-target="#trajectory"><span>Career History — 2020 to 2026</span><kbd>04</kbd></button>
+        <button class="cmd-item active" data-action="scroll" data-target="#hero"><span>Overview</span><kbd>00</kbd></button>
+        <button class="cmd-item" data-action="scroll" data-target="#about"><span>About — Engineering Dossier</span><kbd>01</kbd></button>
+        <button class="cmd-item" data-action="scroll" data-target="#works"><span>Selected Builds</span><kbd>02</kbd></button>
+        <button class="cmd-item" data-action="scroll" data-target="#architecture"><span>Systems Architecture</span><kbd>03</kbd></button>
+        <button class="cmd-item" data-action="scroll" data-target="#trajectory"><span>Background &amp; Sprints</span><kbd>04</kbd></button>
         <button class="cmd-item" data-action="scroll" data-target="#contact"><span>Contact</span><kbd>05</kbd></button>
-        <button class="cmd-item" data-action="theme"><span>Toggle Light / Dark Theme</span><kbd>T</kbd></button>
-        <button class="cmd-item" data-action="copy" data-value="ashcreations218@gmail.com"><span>Copy email (ashcreations218@gmail.com)</span><kbd>Copy</kbd></button>
-        <button class="cmd-item" data-action="link" data-url="https://github.com/ashwinbiju"><span>GitHub profile</span><kbd>↗</kbd></button>
-        <button class="cmd-item" data-action="link" data-url="https://www.linkedin.com/in/ashwinbiju218/"><span>LinkedIn profile</span><kbd>↗</kbd></button>
+        <button class="cmd-item" data-action="copy" data-value="ashcreations218@gmail.com"><span>Copy Email (ashcreations218@gmail.com)</span><kbd>COPY</kbd></button>
+        <button class="cmd-item" data-action="link" data-url="https://github.com/ashwinbiju"><span>GitHub Profile</span><kbd>↗</kbd></button>
+        <button class="cmd-item" data-action="link" data-url="https://www.linkedin.com/in/ashwinbiju218/"><span>LinkedIn Profile</span><kbd>↗</kbd></button>
       </div>
     </div>
   </div>
 
-  <!-- 01 // Hero -->
+  <!-- ═══════════════════════════════════════════════════
+       00 // HERO
+  ═══════════════════════════════════════════════════ -->
   <section class="hero" id="hero">
     <div class="container hero-grid">
       <div class="hero-editorial">
-        <p class="hero-eyebrow mono">01 / Cloud &amp; Linux Systems</p>
+        <span class="section-index mono">00 — Cloud &amp; Linux Systems</span>
         <h1 class="hero-display">
-          Ashwin Biju builds resilient AWS infrastructure, Linux servers, and browser security tools.
+          Systems engineered<br>
+          to stay <em>quiet</em><br>
+          under load
         </h1>
 
         <div class="hero-bottom-row">
           <p class="hero-bio">
-            B.Tech CSE ’26 engineer focused on EC2 provisioning, systemd supervision, Docker containers, and client-side threat filtering.
+            Cloud Infrastructure, Linux Systems &amp; Security Engineer crafting resilient AWS environments, containerized pipelines, and low-latency browser defense.
           </p>
 
           <div class="hero-cta-group">
-            <a href="#works" class="btn-primary">
-              <span>Selected builds</span>
+            <a href="#works" class="pill-cta">
+              <span>Selected Builds</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </a>
-            <a href="#contact" class="link-underline">Get in touch</a>
+            <a href="#about" class="link-underline">About me</a>
           </div>
         </div>
       </div>
 
       <div class="hero-visual-col">
-        <figure class="portrait-frame">
+        <div class="portrait-frame" id="portrait-frame">
           <img src="assets/images/ashwin.jpg" alt="Ashwin Biju — Cloud and Systems Engineer" loading="eager">
-          <figcaption class="portrait-caption">
+          <div class="portrait-caption">
             <span>Ashwin Biju</span>
-            <span class="mono">B.Tech CSE ’26 · Kerala</span>
-          </figcaption>
-        </figure>
+            <span class="mono">B.Tech CSE ’26</span>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="container hero-ticker-row mono">
+    <div class="container hero-ticker-row">
       <span>AWS EC2 · S3 · EBS</span>
       <span>Docker &amp; Kubernetes</span>
       <span>Ubuntu &amp; systemd</span>
       <span>TensorFlow.js Security</span>
-      <span>Open to engineering roles</span>
+      <span>Open to Engineering Roles</span>
     </div>
   </section>
 
-  <!-- 02 // Selected Builds -->
-  <section class="section works-section" id="works" data-theme="dark">
+  <!-- ═══════════════════════════════════════════════════
+       01 // ABOUT — OPERATOR DOSSIER & PRINCIPLES
+  ═══════════════════════════════════════════════════ -->
+  <section class="section about-section" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-narrative">
+          <span class="section-index mono">01 — About</span>
+          <h2 class="section-display">
+            I build infrastructure that stays <em>predictable</em> at 3 AM
+          </h2>
+          <p class="about-copy">
+            I&rsquo;m <strong>Ashwin Biju</strong>, a final-year B.Tech Computer Science student in Kerala focused on Linux administration, AWS cloud infrastructure, and automated DevOps workflows.
+          </p>
+          <p class="about-copy">
+            I prefer boring, observable systems over fragile complexity: versioned Git commits, minimal Alpine containers, strict <code>/24</code> network boundaries, and <code>systemd</code> services that recover cleanly on their own.
+          </p>
+
+          <div class="about-specs">
+            <div class="spec-row">
+              <span class="spec-label">Location</span>
+              <span class="spec-val">Ernakulam, Kerala, India</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-label">Degree</span>
+              <span class="spec-val">B.Tech CSE (KTU, 2026)</span>
+            </div>
+            <div class="spec-row">
+              <span class="spec-label">Focus</span>
+              <span class="spec-val">DevOps, AWS &amp; Linux Systems</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-dossier">
+          <div class="dossier-tabs" role="tablist" aria-label="Engineering focus areas">
+            <button class="d-tab active" data-dossier="cloud" type="button" role="tab" aria-selected="true">Cloud &amp; Linux</button>
+            <button class="d-tab" data-dossier="containers" type="button" role="tab" aria-selected="false">Containers</button>
+            <button class="d-tab" data-dossier="security" type="button" role="tab" aria-selected="false">Security</button>
+          </div>
+
+          <div class="dossier-body">
+            <div class="dossier-head">
+              <span class="mono" id="dossier-code">ENV // AP-SOUTH-1</span>
+              <span class="dossier-status" id="dossier-tag">Infrastructure</span>
+            </div>
+
+            <h3 class="dossier-title" id="dossier-title">Hardened Linux &amp; Elastic AWS</h3>
+            <p class="dossier-desc" id="dossier-desc">
+              Provisioning Ubuntu/Debian EC2 instances with key-only SSH, segmented /24 CIDR subnets, EBS &amp; S3 storage sync, and supervised systemd daemons.
+            </p>
+
+            <div class="dossier-metrics" id="dossier-metrics">
+              <div class="dm-cell">
+                <span>Compute</span>
+                <strong>AWS EC2 · Ubuntu</strong>
+              </div>
+              <div class="dm-cell">
+                <span>Storage</span>
+                <strong>EBS + S3 Sync</strong>
+              </div>
+              <div class="dm-cell">
+                <span>Init System</span>
+                <strong>systemd units</strong>
+              </div>
+              <div class="dm-cell">
+                <span>Networking</span>
+                <strong class="mono">CIDR /24 + UFW</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       02 // SELECTED BUILDS — GALLERY / INDEX SWITCHER
+  ═══════════════════════════════════════════════════ -->
+  <section class="section works-section" id="works">
     <div class="container">
       <div class="works-header">
         <div>
-          <p class="section-eyebrow mono">02 / Selected Builds</p>
-          <h2 class="section-display">Production &amp; lab systems</h2>
+          <span class="section-index mono">02 — Selected Builds</span>
+          <h2 class="section-display">
+            Production &amp; <em>Lab</em> Work
+          </h2>
         </div>
 
         <div class="view-toggle" role="tablist" aria-label="Work display mode">
-          <button class="vt-btn active" data-view="gallery" type="button" role="tab" aria-selected="true">Cards</button>
+          <button class="vt-btn active" data-view="gallery" type="button" role="tab" aria-selected="true">Gallery</button>
           <button class="vt-btn" data-view="index" type="button" role="tab" aria-selected="false">Index</button>
         </div>
       </div>
 
-      <!-- Cards View -->
+      <!-- Gallery View (Default) -->
       <div class="works-gallery" id="works-gallery">
         <!-- Build 01 -->
         <article class="work-piece">
           <div class="wp-top">
             <span class="wp-index mono">01</span>
             <span class="wp-role">Browser Security Engine</span>
-            <span class="wp-status">Active</span>
+            <span class="wp-status" id="sf-badge">Shield Armed</span>
           </div>
 
           <h3 class="wp-title">Secure Flow</h3>
           <p class="wp-summary">
-            Real-time malicious advertisement and redirect protection engine. Combines client-side <strong>TensorFlow.js</strong> classification with <strong>Google Safe Browsing</strong> and <strong>VirusTotal APIs</strong> using Chrome’s Declarative Net Request API.
+            Real-time malicious advertisement and redirect protection engine. Fuses client-side <strong>TensorFlow.js</strong> classification with <strong>Google Safe Browsing</strong> and <strong>VirusTotal APIs</strong>, enforcing zero-latency blocks via Chrome's Declarative Net Request API.
           </p>
 
           <div class="wp-telemetry">
             <div class="wt-cell"><span>Runtime</span><strong>Manifest V3 + DNR</strong></div>
-            <div class="wt-cell"><span>Inference</span><strong>TensorFlow.js local</strong></div>
+            <div class="wt-cell"><span>Inference</span><strong>TensorFlow.js Local</strong></div>
             <div class="wt-cell"><span>Feeds</span><strong>Safe Browsing + VT</strong></div>
-            <div class="wt-cell"><span>Blocking</span><strong>Chrome DNR rules</strong></div>
+            <div class="wt-cell"><span>Latency</span><strong class="mono">&lt; 2ms Block</strong></div>
           </div>
 
-          <div class="wp-stack-row mono">
-            <span>JavaScript</span>
-            <span>TensorFlow.js</span>
-            <span>Chrome DNR</span>
-            <span>VirusTotal API</span>
+          <div class="wp-console">
+            <code id="sf-log">&gt; awaiting navigation telemetry</code>
+            <button class="wp-action" id="sim-secureflow" type="button">Simulate Intercept</button>
           </div>
         </article>
 
@@ -163,7 +248,7 @@
           <div class="wp-top">
             <span class="wp-index mono">02</span>
             <span class="wp-role">Cloud Infrastructure</span>
-            <span class="wp-status">Healthy</span>
+            <span class="wp-status" id="cl-badge">EC2 Healthy</span>
           </div>
 
           <h3 class="wp-title">Cloud Lab Sandbox</h3>
@@ -172,17 +257,15 @@
           </p>
 
           <div class="wp-telemetry">
-            <div class="wt-cell"><span>Daemon</span><strong>nginx.service</strong></div>
+            <div class="wt-cell"><span>Daemon</span><strong>nginx.service active</strong></div>
             <div class="wt-cell"><span>Subnet</span><strong class="mono">192.168.10.0/24</strong></div>
-            <div class="wt-cell"><span>Containers</span><strong>Docker Alpine</strong></div>
-            <div class="wt-cell"><span>Storage</span><strong>EBS + S3 sync</strong></div>
+            <div class="wt-cell"><span>Containers</span><strong>Docker Hub Alpine</strong></div>
+            <div class="wt-cell"><span>Storage</span><strong>EBS + S3 Synced</strong></div>
           </div>
 
-          <div class="wp-stack-row mono">
-            <span>AWS EC2</span>
-            <span>S3 &amp; EBS</span>
-            <span>Docker</span>
-            <span>systemd</span>
+          <div class="wp-console">
+            <code id="cl-log">&gt; ready for diagnostic probe</code>
+            <button class="wp-action" id="sim-cloudlab" type="button">Probe Node</button>
           </div>
         </article>
       </div>
@@ -214,29 +297,21 @@
     </div>
   </section>
 
-  <!-- 03 // Systems Architecture (Interactive Live Pipeline) -->
-  <section class="section arch-section" id="architecture" data-theme="dark">
+  <!-- ═══════════════════════════════════════════════════
+       03 // SYSTEMS ARCHITECTURE — INTERACTIVE PATHWAY
+  ═══════════════════════════════════════════════════ -->
+  <section class="section arch-section" id="architecture">
     <div class="container">
       <div class="arch-intro">
         <div>
-          <p class="section-eyebrow mono">03 / Systems Architecture</p>
-          <h2 class="section-display">From commit to live traffic</h2>
+          <span class="section-index mono">03 — Systems Flow</span>
+          <h2 class="section-display">
+            From first commit<br>to <em>live</em> traffic
+          </h2>
         </div>
-        <div class="arch-controls">
-          <p class="arch-lead">
-            Select any stage to inspect its configuration, or run the pipeline to trace a deployment end-to-end.
-          </p>
-          <button class="btn-secondary" id="run-pipeline-btn" type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span id="run-pipeline-label">Run pipeline</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Live Stage Stepper Bar -->
-      <div class="pipeline-stepper" id="pipeline-stepper" aria-label="Pipeline progress">
-        <div class="ps-track"><div class="ps-fill" id="ps-fill"></div></div>
-        <span class="ps-label mono" id="ps-status">Stage 01 / 06 · Source</span>
+        <p class="arch-lead">
+          Select any stage to trace how code moves through containers, orchestration, and hardened Linux kernels.
+        </p>
       </div>
 
       <div class="arch-interactive">
@@ -276,13 +351,7 @@
         <div class="arch-inspector">
           <div class="ai-bar">
             <span id="ai-file" class="mono">git-workflow.sh</span>
-            <div class="ai-bar-actions">
-              <span id="ai-tag" class="ai-pill">Source</span>
-              <button class="ai-copy-btn" id="ai-copy-btn" type="button" aria-label="Copy snippet">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                <span>Copy</span>
-              </button>
-            </div>
+            <span id="ai-tag" class="ai-pill">Source</span>
           </div>
           <pre class="ai-code" id="ai-code"><code>git checkout -b feat/hardened-nginx
 git commit -S -m "chore(infra): enforce tls 1.3"
@@ -296,11 +365,15 @@ git push origin v2.4.0</code></pre>
     </div>
   </section>
 
-  <!-- 04 // Trajectory -->
-  <section class="section trajectory-section" id="trajectory" data-theme="dark">
+  <!-- ═══════════════════════════════════════════════════
+       04 // TRAJECTORY — EDITORIAL LEDGER
+  ═══════════════════════════════════════════════════ -->
+  <section class="section trajectory-section" id="trajectory">
     <div class="container">
-      <p class="section-eyebrow mono">04 / History</p>
-      <h2 class="section-display">Education &amp; internships</h2>
+      <span class="section-index mono">04 — Trajectory</span>
+      <h2 class="section-display">
+        Background &amp; <em>Sprints</em>
+      </h2>
 
       <div class="ledger">
         <div class="ledger-row">
@@ -350,37 +423,40 @@ git push origin v2.4.0</code></pre>
     </div>
   </section>
 
-  <!-- 05 // Contact -->
-  <section class="section contact-section" id="contact" data-theme="dark">
+  <!-- ═══════════════════════════════════════════════════
+       05 // CONTACT — MINIMAL HANDSHAKE
+  ═══════════════════════════════════════════════════ -->
+  <section class="section contact-section" id="contact">
     <div class="container">
       <div class="contact-box">
-        <p class="section-eyebrow mono">05 / Contact</p>
+        <span class="section-index mono">05 — Contact</span>
         <h2 class="contact-display">
-          Open to Cloud, DevOps &amp; Linux engineering roles
+          Let&rsquo;s build something<br>
+          <em>unbreakable</em> together
         </h2>
         <p class="contact-sub">
-          Based in Kerala, India and available for full-time roles or infrastructure projects.
+          Open to Cloud Infrastructure, DevOps &amp; Linux Systems Engineering roles.
         </p>
 
         <div class="contact-email-wrap">
           <a href="mailto:ashcreations218@gmail.com" class="email-hero">
             <span>ashcreations218@gmail.com</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
           </a>
         </div>
 
         <div class="contact-actions">
-          <a href="mailto:ashcreations218@gmail.com?subject=Engineering%20Inquiry" class="btn-primary">Send email</a>
-          <button class="btn-secondary" id="copy-email-btn" type="button">Copy address</button>
-          <a href="https://github.com/ashwinbiju" target="_blank" rel="noopener noreferrer" class="btn-secondary">GitHub</a>
-          <a href="https://www.linkedin.com/in/ashwinbiju218/" target="_blank" rel="noopener noreferrer" class="btn-secondary">LinkedIn</a>
-          <a href="tel:+918078591435" class="btn-secondary mono">+91 8078591435</a>
+          <a href="mailto:ashcreations218@gmail.com?subject=Engineering%20Inquiry" class="pill-cta">Send Email</a>
+          <button class="pill-outline" id="copy-email-btn" type="button">Copy Address</button>
+          <a href="https://github.com/ashwinbiju" target="_blank" rel="noopener noreferrer" class="pill-outline">GitHub</a>
+          <a href="https://www.linkedin.com/in/ashwinbiju218/" target="_blank" rel="noopener noreferrer" class="pill-outline">LinkedIn</a>
+          <a href="tel:+918078591435" class="pill-outline mono">+91 8078591435</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- Quiet Minimal Footer -->
   <footer class="site-footer">
     <div class="container footer-row">
       <span>&copy; 2026 Ashwin Biju</span>
@@ -391,6 +467,10 @@ git push origin v2.4.0</code></pre>
 
   <div class="toast" id="toast" role="status" aria-live="polite">Copied to clipboard</div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="js/main.js" defer></script>
+
 </body>
 </html>
