@@ -570,92 +570,35 @@ button { font-family: inherit; cursor: none; color: inherit; }
 
 .about-cinema-grid {
   display: grid;
-  grid-template-columns: 0.88fr 1.12fr;
+  grid-template-columns: 1fr 1.05fr;
   gap: 52px;
   align-items: center;
   margin-bottom: 52px;
 }
 
-/* Left: Interactive Dual-Layer X-Ray Portrait */
-.xray-stage {
+/* Left: Interactive Live Topology Canvas */
+.topo-stage {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-.xray-frame {
+.topo-frame {
   position: relative;
-  aspect-ratio: 4 / 4.8;
+  aspect-ratio: 4 / 3.4;
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  background: #09090d;
+  background: radial-gradient(circle at 50% 45%, rgba(56, 189, 248, 0.08), #07070c 72%);
   user-select: none;
   touch-action: none;
   box-shadow: 0 28px 60px rgba(0, 0, 0, 0.55);
 }
-.xray-img {
-  position: absolute;
-  inset: 0;
+#topo-canvas {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 20%;
-  pointer-events: none;
 }
-.xray-overlay {
-  position: absolute;
-  inset: 0;
-  clip-path: inset(0 0 0 50%);
-  will-change: clip-path;
-}
-.xray-overlay::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      rgba(56, 189, 248, 0.14) 0px,
-      rgba(56, 189, 248, 0.14) 1px,
-      transparent 1px,
-      transparent 4px
-    ),
-    radial-gradient(circle at 50% 35%, rgba(56, 189, 248, 0.26), rgba(14, 24, 48, 0.45) 75%);
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-.xray-matrix {
-  filter: sepia(1) hue-rotate(165deg) saturate(2.8) contrast(1.28) brightness(1.05);
-}
-.xray-divider {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 2px;
-  background: linear-gradient(180deg, transparent, var(--accent) 18%, #fff 50%, var(--accent2) 82%, transparent);
-  box-shadow: 0 0 18px rgba(56, 189, 248, 0.75);
-  transform: translateX(-50%);
-  pointer-events: none;
-  z-index: 4;
-}
-.xray-handle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: rgba(8, 10, 16, 0.92);
-  border: 1.5px solid var(--accent);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
-}
-.xray-hud {
+.topo-hud {
   position: absolute;
   bottom: 14px;
   left: 14px;
@@ -665,19 +608,22 @@ button { font-family: inherit; cursor: none; color: inherit; }
   align-items: center;
   padding: 8px 12px;
   border-radius: 10px;
-  background: rgba(5, 5, 9, 0.74);
+  background: rgba(5, 5, 9, 0.78);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 5;
   pointer-events: none;
 }
-.xray-tag {
+.topo-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--mono);
   font-size: 10.5px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   color: var(--soft);
 }
-.xray-pct {
+.topo-pct {
   font-family: var(--mono);
   font-size: 11px;
   font-weight: 500;

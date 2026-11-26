@@ -179,57 +179,189 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', markScrolling, { passive: true });
     if (lenis) lenis.on('scroll', markScrolling);
 
-    // Page 2 (#craft) — Interactive Split-Reality X-Ray + Odometer + Physics Stack Playground
-    const xrayFrame = document.getElementById('xray-frame');
-    const xrayOverlay = document.getElementById('xray-overlay');
-    const xrayDivider = document.getElementById('xray-divider');
-    const xrayPct = document.getElementById('xray-pct');
-    const xrayModeBtn = document.getElementById('xray-mode-btn');
+    // Page 2 (#craft) — Interactive Live Topology Canvas + Odometer + Physics Stack Playground
+    const topoCanvas = document.getElementById('topo-canvas');
+    const topoStatus = document.getElementById('topo-status');
+    const topoRps = document.getElementById('topo-rps');
+    const topoFailoverBtn = document.getElementById('topo-failover-btn');
 
-    let xrayRatio = 0.5;
-    let xrayAuto = false;
-    let xrayAutoPhase = 0;
+    if (topoCanvas) {
+      const ctx = topoCanvas.getContext('2d');
+      let cw = 0, ch = 0;
+      const pointer = { x: -999, y: -999, active: false };
+      let failoverTimer = 0;
+      let failedIdx = -1;
+      const pulses = [];
 
-    function setXraySplit(ratio) {
-      xrayRatio = Math.max(0.05, Math.min(0.95, ratio));
-      const pct = Math.round(xrayRatio * 100);
-      if (xrayOverlay) xrayOverlay.style.clipPath = `inset(0 0 0 ${pct}%)`;
-      if (xrayDivider) xrayDivider.style.left = `${pct}%`;
-      if (xrayPct) xrayPct.textContent = `${pct}%`;
-    }
+      const nodes = [
+        { label: 'GIT',    rx: 0.20, ry: 0.26, x: 0, y: 0, vx: 0, vy: 0, color: '#818cf8' },
+        { label: 'DOCKER', rx: 0.50, ry: 0.20, x: 0, y: 0, vx: 0, vy: 0, color: '#38bdf8' },
+        { label: 'K8S',    rx: 0.80, ry: 0.28, x: 0, y: 0, vx: 0, vy: 0, color: '#34d399' },
+        { label: 'AWS',    rx: 0.76, ry: 0.68, x: 0, y: 0, vx: 0, vy: 0, color: '#f59e0b' },
+        { label: 'NET/24', rx: 0.46, ry: 0.72, x: 0, y: 0, vx: 0, vy: 0, color: '#38bdf8' },
+        { label: 'LINUX',  rx: 0.20, ry: 0.64, x: 0, y: 0, vx: 0, vy: 0, color: '#fafafa' },
+      ];
+      const edges = [
+        [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [1, 4], [2, 4], [0, 4]
+      ];
+      const packets = edges.map(([a, b], i) => ({
+        a, b, t: (i * 0.17) % 1, speed: 0.006 + (i % 3) * 0.0025
+      }));
 
-    if (xrayFrame) {
-      let xrayDragging = false;
-      const updateFromClientX = (clientX) => {
-        const rect = xrayFrame.getBoundingClientRect();
-        if (rect.width > 0) setXraySplit((clientX - rect.left) / rect.width);
-      };
+      function resizeTopo() {
+        const rect = topoCanvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        cw = rect.width;
+        ch = rect.height;
+        topoCanvas.width = cw * dpr;
+        topoCanvas.height = ch * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        nodes.forEach((n) => {
+          n.x = n.rx * cw;
+          n.y = n.ry * ch;
+        });
+      }
+      resizeTopo();
+      window.addEventListener('resize', resizeTopo);
 
-      xrayFrame.addEventListener('pointerdown', (e) => {
-        xrayDragging = true;
-        xrayAuto = false;
-        if (xrayModeBtn) xrayModeBtn.classList.remove('is-active');
-        xrayFrame.setPointerCapture(e.pointerId);
-        updateFromClientX(e.clientX);
+      topoCanvas.addEventListener('pointermove', (e) => {
+        const rect = topoCanvas.getBoundingClientRect();
+        pointer.x = e.clientX - rect.left;
+        pointer.y = e.clientY - rect.top;
+        pointer.active = true;
       });
-      xrayFrame.addEventListener('pointermove', (e) => {
-        if (xrayDragging || e.pointerType === 'mouse') {
-          if (xrayAuto) {
-            xrayAuto = false;
-            if (xrayModeBtn) xrayModeBtn.classList.remove('is-active');
+      topoCanvas.addEventListener('pointerleave', () => { pointer.active = false; });
+
+      topoCanvas.addEventListener('click', (e) => {
+        const rect = topoCanvas.getBoundingClientRect();
+        const cx = e.clientX - rect.left;
+        const cy = e.clientY - rect.top;
+        pulses.push({ x: cx, y: cy, r: 8, alpha: 0.9 });
+        packets.forEach((p) => { p.speed = Math.min(0.032, p.speed + 0.012); });
+        if (topoRps) topoRps.textContent = `${Math.floor(2400 + Math.random() * 900)} req/s`;
+      });
+
+      if (topoFailoverBtn) {
+        topoFailoverBtn.addEventListener('click', () => {
+          failedIdx = Math.floor(Math.random() * nodes.length);
+          failoverTimer = 110;
+          topoFailoverBtn.classList.add('is-active');
+          if (topoStatus) {
+            topoStatus.innerHTML = `<span class="sp-dot" style="background:#f59e0b;box-shadow:0 0 10px #f59e0b"></span> REROUTING ${nodes[failedIdx].label}...`;
           }
-          updateFromClientX(e.clientX);
-        }
-      });
-      xrayFrame.addEventListener('pointerup', () => { xrayDragging = false; });
-      xrayFrame.addEventListener('pointercancel', () => { xrayDragging = false; });
-    }
+          if (topoRps) topoRps.textContent = 'FAILOVER // 0ms DROP';
+        });
+      }
 
-    if (xrayModeBtn) {
-      xrayModeBtn.addEventListener('click', () => {
-        xrayAuto = !xrayAuto;
-        xrayModeBtn.classList.toggle('is-active', xrayAuto);
-      });
+      function renderTopo(time) {
+        if (!cw || !ch) return;
+        ctx.clearRect(0, 0, cw, ch);
+
+        // Subtle grid dots
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        for (let gx = 24; gx < cw; gx += 28) {
+          for (let gy = 24; gy < ch - 36; gy += 28) {
+            ctx.fillRect(gx, gy, 1.2, 1.2);
+          }
+        }
+
+        // Update node positions (gentle float + pointer attraction)
+        nodes.forEach((n, idx) => {
+          const homeX = n.rx * cw + Math.sin(time * 0.0011 + idx * 1.4) * 8;
+          const homeY = n.ry * (ch - 36) + Math.cos(time * 0.0013 + idx * 1.7) * 7;
+          if (pointer.active) {
+            const dx = pointer.x - n.x;
+            const dy = pointer.y - n.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 140 && dist > 1) {
+              n.vx += (dx / dist) * 0.32;
+              n.vy += (dy / dist) * 0.32;
+            }
+          }
+          n.vx += (homeX - n.x) * 0.045;
+          n.vy += (homeY - n.y) * 0.045;
+          n.vx *= 0.84;
+          n.vy *= 0.84;
+          n.x += n.vx;
+          n.y += n.vy;
+        });
+
+        // Failover timer countdown
+        if (failoverTimer > 0) {
+          failoverTimer--;
+          if (failoverTimer === 0) {
+            failedIdx = -1;
+            if (topoFailoverBtn) topoFailoverBtn.classList.remove('is-active');
+            if (topoStatus) topoStatus.innerHTML = '<span class="sp-dot"></span> MESH NOMINAL // 6 NODES';
+            if (topoRps) topoRps.textContent = '1,240 req/s';
+          }
+        }
+
+        // Draw edges
+        edges.forEach(([a, b]) => {
+          const na = nodes[a], nb = nodes[b];
+          const isDegraded = (a === failedIdx || b === failedIdx);
+          ctx.beginPath();
+          ctx.moveTo(na.x, na.y);
+          ctx.lineTo(nb.x, nb.y);
+          ctx.strokeStyle = isDegraded ? 'rgba(245, 158, 11, 0.22)' : 'rgba(148, 163, 184, 0.2)';
+          ctx.lineWidth = isDegraded ? 1 : 1.4;
+          if (isDegraded) ctx.setLineDash([4, 4]);
+          else ctx.setLineDash([]);
+          ctx.stroke();
+        });
+        ctx.setLineDash([]);
+
+        // Draw moving packets
+        packets.forEach((p, idx) => {
+          p.speed += ((0.006 + (idx % 3) * 0.0025) - p.speed) * 0.03;
+          p.t = (p.t + p.speed) % 1;
+          if (p.a === failedIdx || p.b === failedIdx) return;
+          const na = nodes[p.a], nb = nodes[p.b];
+          const px = na.x + (nb.x - na.x) * p.t;
+          const py = na.y + (nb.y - na.y) * p.t;
+          ctx.beginPath();
+          ctx.arc(px, py, 3, 0, Math.PI * 2);
+          ctx.fillStyle = '#38bdf8';
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 10;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        });
+
+        // Click shockwaves
+        for (let i = pulses.length - 1; i >= 0; i--) {
+          const pl = pulses[i];
+          pl.r += 4.5;
+          pl.alpha *= 0.92;
+          ctx.beginPath();
+          ctx.arc(pl.x, pl.y, pl.r, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(56, 189, 248, ${pl.alpha})`;
+          ctx.lineWidth = 1.6;
+          ctx.stroke();
+          if (pl.alpha < 0.04) pulses.splice(i, 1);
+        }
+
+        // Draw nodes
+        nodes.forEach((n, idx) => {
+          const isFailed = idx === failedIdx;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, isFailed ? 17 : 20, 0, Math.PI * 2);
+          ctx.fillStyle = isFailed ? 'rgba(42, 22, 12, 0.92)' : 'rgba(12, 14, 22, 0.92)';
+          ctx.fill();
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = isFailed ? '#f59e0b' : n.color;
+          ctx.stroke();
+
+          ctx.font = '500 10px "IBM Plex Mono", monospace';
+          ctx.fillStyle = isFailed ? '#fcd34d' : '#fafafa';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(n.label, n.x, n.y);
+        });
+      }
+
+      gsap.ticker.add((t) => renderTopo(t * 1000));
     }
 
     // Odometer roll-up animation
@@ -361,13 +493,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Physics & Auto-scan ticker
+    // Physics ticker
     gsap.ticker.add(() => {
-      if (xrayAuto) {
-        xrayAutoPhase += 0.025;
-        setXraySplit(0.5 + Math.sin(xrayAutoPhase) * 0.42);
-      }
-
       if (!spArena) return;
       const arenaRect = spArena.getBoundingClientRect();
       stickers.forEach((el) => {

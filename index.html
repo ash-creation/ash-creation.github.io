@@ -168,26 +168,18 @@
       </div>
 
       <div class="about-cinema-grid" id="about-profile-grid">
-        <!-- Left: Interactive Dual-Layer X-Ray Portrait -->
-        <div class="xray-stage" id="xray-stage">
-          <div class="xray-frame" id="xray-frame">
-            <img src="assets/images/ashwin.jpg" alt="Ashwin Biju" class="xray-img xray-base" draggable="false">
-            <div class="xray-overlay" id="xray-overlay">
-              <img src="assets/images/ashwin-matrix.jpg" alt="Ashwin Biju Matrix Layer" class="xray-img xray-matrix" draggable="false">
-            </div>
-            <div class="xray-divider" id="xray-divider" aria-hidden="true">
-              <span class="xray-handle">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 18-6-6 6-6"/><path d="m15 6 6 6-6 6"/></svg>
-              </span>
-            </div>
-            <div class="xray-hud">
-              <span class="xray-tag">REALITY // MATRIX</span>
-              <span class="xray-pct" id="xray-pct">50%</span>
+        <!-- Left: Interactive Live Topology & Packet-Flow Canvas -->
+        <div class="topo-stage" id="topo-stage">
+          <div class="topo-frame" id="topo-frame">
+            <canvas id="topo-canvas" aria-label="Interactive infrastructure topology simulation"></canvas>
+            <div class="topo-hud">
+              <span class="topo-tag" id="topo-status"><span class="sp-dot"></span> MESH NOMINAL // 6 NODES</span>
+              <span class="topo-pct" id="topo-rps">1,240 req/s</span>
             </div>
           </div>
           <div class="xray-caption">
-            <span>DRAG SLIDER OR MOVE CURSOR TO SPLIT LAYERS</span>
-            <button class="xray-mode-btn" id="xray-mode-btn" type="button">AUTO SCAN</button>
+            <span>MOVE CURSOR TO ATTRACT &bull; CLICK CANVAS FOR PACKET BURST</span>
+            <button class="xray-mode-btn" id="topo-failover-btn" type="button">SIMULATE FAILOVER</button>
           </div>
         </div>
 
