@@ -1,24 +1,8 @@
 /* ═══════════════════════════════════════════════════
-   MAIN.JS — Unslopped Interactions, Dossier Switcher,
-   Gallery/Index Toggle & Architecture Inspector
+   MAIN.JS — Architectural Scroll Choreography & Interactions
 ═══════════════════════════════════════════════════ */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // ── 0. MINIMAL PRELOADER ────────────────────────────
-  const preloader = document.getElementById('preloader');
-  const preCounter = document.getElementById('pre-counter');
-  if (preloader && preCounter) {
-    let val = 0;
-    const step = setInterval(() => {
-      val = Math.min(100, val + 20);
-      preCounter.textContent = String(val).padStart(3, '0');
-      if (val >= 100) {
-        clearInterval(step);
-        setTimeout(() => preloader.classList.add('done'), 120);
-      }
-    }, 35);
-  }
-
   if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
   }
@@ -43,21 +27,19 @@ document.addEventListener('DOMContentLoaded', () => {
   let lenis = null;
   if (typeof Lenis !== 'undefined') {
     lenis = new Lenis({
-      duration: 1.0,
+      duration: 1.15,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smooth: true,
     });
-    if (typeof ScrollTrigger !== 'undefined') {
-      lenis.on('scroll', ScrollTrigger.update);
-      gsap.ticker.add((time) => lenis.raf(time * 1000));
-      gsap.ticker.lagSmoothing(0);
-    }
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
   }
 
   function scrollToTarget(selector) {
     const el = document.querySelector(selector);
     if (!el) return;
-    if (lenis) lenis.scrollTo(el, { offset: -64 });
+    if (lenis) lenis.scrollTo(el, { offset: -60 });
     else el.scrollIntoView({ behavior: 'smooth' });
   }
 
@@ -71,15 +53,110 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── 3. SCROLL NAV TRACKING & SUBTLE ENTRANCE ────────
+  // ── 3. SCRAMBLE / DECRYPTED TEXT ────────────────────
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/_';
+  function scrambleEl(el) {
+    const target = el.dataset.text || el.textContent;
+    let iter = 0;
+    const interval = setInterval(() => {
+      el.textContent = target
+        .split('')
+        .map((c, idx) => (c === ' ' ? ' ' : idx < iter ? target[idx] : chars[Math.floor(Math.random() * chars.length)]))
+        .join('');
+      iter += 0.6;
+      if (iter >= target.length) {
+        el.textContent = target;
+        clearInterval(interval);
+      }
+    }, 24);
+  }
+
+  document.querySelectorAll('.scramble-text').forEach((el) => {
+    if (typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 90%',
+        once: true,
+        onEnter: () => scrambleEl(el),
+      });
+    } else {
+      scrambleEl(el);
+    }
+  });
+
+  // ── 4. SCROLL CHOREOGRAPHY (SEAMLESS FLOW + REACTBITS BLURTEXT) ───
+  // Split .blur-words headings into individual animated word spans
+  document.querySelectorAll('.blur-words').forEach((el) => {
+    const words = el.textContent.trim().split(/\s+/);
+    el.innerHTML = words
+      .map((w, i) => {
+        const isAccent = i >= words.length - 2;
+        return `<span class="blur-word ${isAccent ? 'outline-text' : ''}">${w}</span>`;
+      })
+      .join('');
+  });
+
   if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-    const navLinks = document.querySelectorAll('.header-nav a[data-sec]');
-    ['#about', '#works', '#architecture', '#trajectory', '#contact'].forEach((sel) => {
+    // ReactBits BlurText word-by-word stagger on scroll
+    document.querySelectorAll('.blur-words').forEach((heading) => {
+      const words = heading.querySelectorAll('.blur-word');
+      gsap.fromTo(
+        words,
+        { opacity: 0, y: 24, filter: 'blur(10px)' },
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.75,
+          stagger: 0.06,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: heading, start: 'top 88%', once: true },
+        }
+      );
+    });
+
+    // Seamless Hero -> Craft exit morph (scales & softens hero as you scroll into #craft)
+    const heroEl = document.getElementById('hero');
+    const craftEl = document.getElementById('craft');
+    if (heroEl && craftEl) {
+      gsap.to(heroEl, {
+        scale: 0.92,
+        opacity: 0.15,
+        filter: 'blur(8px)',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: craftEl,
+          start: 'top bottom',
+          end: 'top 25%',
+          scrub: true,
+        },
+      });
+    }
+
+    // Continuous Left-Edge Pipeline Rail + Top Header Scroll Tracking
+    const railFill = document.getElementById('rail-fill');
+    const railNodes = document.querySelectorAll('.rail-node');
+    const topLinks = document.querySelectorAll('.tb-links a[data-sec]');
+    const sections = ['#hero-stage-wrap', '#craft', '#works', '#trajectory', '#contact'];
+    if (railFill) {
+      gsap.to(railFill, {
+        height: '100%',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: document.body,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: true,
+        },
+      });
+    }
+    sections.forEach((sel, idx) => {
       const sec = document.querySelector(sel);
       if (!sec) return;
-      const id = sel.replace('#', '');
+      const secId = sel.replace('#', '');
       const setActive = () => {
-        navLinks.forEach((a) => a.classList.toggle('active', a.dataset.sec === id));
+        railNodes.forEach((n, i) => n.classList.toggle('active', i === idx));
+        topLinks.forEach((a) => a.classList.toggle('active', a.dataset.sec === secId));
       };
       ScrollTrigger.create({
         trigger: sec,
@@ -90,200 +167,469 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    gsap.utils.toArray('.work-piece, .ledger-row').forEach((el) => {
+    // Track active scrolling so stationary cursor never triggers hover highlights during scroll
+    let scrollTimer = null;
+    const markScrolling = () => {
+      document.body.classList.add('is-scrolling');
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        document.body.classList.remove('is-scrolling');
+      }, 180);
+    };
+    window.addEventListener('scroll', markScrolling, { passive: true });
+    if (lenis) lenis.on('scroll', markScrolling);
+
+    // Page 2 (#craft) — Interactive Split-Reality X-Ray + Odometer + Physics Stack Playground
+    const xrayFrame = document.getElementById('xray-frame');
+    const xrayOverlay = document.getElementById('xray-overlay');
+    const xrayDivider = document.getElementById('xray-divider');
+    const xrayPct = document.getElementById('xray-pct');
+    const xrayModeBtn = document.getElementById('xray-mode-btn');
+
+    let xrayRatio = 0.5;
+    let xrayAuto = false;
+    let xrayAutoPhase = 0;
+
+    function setXraySplit(ratio) {
+      xrayRatio = Math.max(0.05, Math.min(0.95, ratio));
+      const pct = Math.round(xrayRatio * 100);
+      if (xrayOverlay) xrayOverlay.style.clipPath = `inset(0 0 0 ${pct}%)`;
+      if (xrayDivider) xrayDivider.style.left = `${pct}%`;
+      if (xrayPct) xrayPct.textContent = `${pct}%`;
+    }
+
+    if (xrayFrame) {
+      let xrayDragging = false;
+      const updateFromClientX = (clientX) => {
+        const rect = xrayFrame.getBoundingClientRect();
+        if (rect.width > 0) setXraySplit((clientX - rect.left) / rect.width);
+      };
+
+      xrayFrame.addEventListener('pointerdown', (e) => {
+        xrayDragging = true;
+        xrayAuto = false;
+        if (xrayModeBtn) xrayModeBtn.classList.remove('is-active');
+        xrayFrame.setPointerCapture(e.pointerId);
+        updateFromClientX(e.clientX);
+      });
+      xrayFrame.addEventListener('pointermove', (e) => {
+        if (xrayDragging || e.pointerType === 'mouse') {
+          if (xrayAuto) {
+            xrayAuto = false;
+            if (xrayModeBtn) xrayModeBtn.classList.remove('is-active');
+          }
+          updateFromClientX(e.clientX);
+        }
+      });
+      xrayFrame.addEventListener('pointerup', () => { xrayDragging = false; });
+      xrayFrame.addEventListener('pointercancel', () => { xrayDragging = false; });
+    }
+
+    if (xrayModeBtn) {
+      xrayModeBtn.addEventListener('click', () => {
+        xrayAuto = !xrayAuto;
+        xrayModeBtn.classList.toggle('is-active', xrayAuto);
+      });
+    }
+
+    // Odometer roll-up animation
+    const odoNums = document.querySelectorAll('.odo-num');
+    if (odoNums.length) {
+      ScrollTrigger.create({
+        trigger: '#odo-grid',
+        start: 'top 85%',
+        once: true,
+        onEnter: () => {
+          odoNums.forEach((el) => {
+            const target = parseFloat(el.dataset.target || '0');
+            const suffix = el.dataset.suffix || '';
+            const state = { val: 0 };
+            gsap.to(state, {
+              val: target,
+              duration: 1.5,
+              ease: 'power3.out',
+              onUpdate: () => {
+                el.textContent = `${Math.round(state.val)}${suffix}`;
+              },
+            });
+          });
+        },
+      });
+    }
+
+    // Draggable Physics Stack Playground
+    const stackMeta = {
+      linux:  ['LINUX & SYSTEMD',  'Declarative service supervision, journald log forensics, and hardened Ubuntu LTS hosts.'],
+      docker: ['DOCKER',           'Multi-stage minimal container images running as unprivileged users with zero-drift builds.'],
+      k8s:    ['KUBERNETES',       'Self-healing deployments, liveness probes, and declarative horizontal scaling across nodes.'],
+      aws:    ['AWS EC2 & S3',     'Scoped IAM roles, elastic compute provisioning, EBS snapshots, and lifecycle-managed S3 storage.'],
+      net:    ['/24 NETWORKING',   'CIDR subnetting, strict ingress security groups, socket auditing (ss), and UFW firewall rules.'],
+      sec:    ['SECURITY & SSH',   'Key-only SSH hardening, TLS verification, and real-time Chrome DNR + TensorFlow.js threat blocking.'],
+      git:    ['GIT & CI/CD',      'Clean atomic commits, automated build gates, and reproducible release pipelines.'],
+      python: ['PYTHON & BASH',    'Automation scripts, telemetry daemons, and fast CLI tooling for daily ops.'],
+    };
+
+    const stickers = Array.from(document.querySelectorAll('.stack-sticker'));
+    const spArena = document.getElementById('sp-arena');
+    const sprBadge = document.getElementById('spr-badge');
+    const sprText = document.getElementById('spr-text');
+    const scatterBtn = document.getElementById('sp-scatter-btn');
+    const resetBtn = document.getElementById('sp-reset-btn');
+
+    const stickerState = new Map();
+    stickers.forEach((el) => {
+      const tilt = parseFloat(el.dataset.tilt || '0');
+      stickerState.set(el, { x: 0, y: 0, vx: 0, vy: 0, rot: tilt });
+      el.style.transform = `translate3d(0px, 0px, 0) rotate(${tilt}deg)`;
+    });
+
+    function selectSticker(el) {
+      stickers.forEach((s) => s.classList.toggle('is-selected', s === el));
+      const key = el.dataset.stack;
+      if (key && stackMeta[key] && sprBadge && sprText) {
+        sprBadge.textContent = stackMeta[key][0];
+        sprText.textContent = stackMeta[key][1];
+      }
+    }
+    if (stickers[0]) selectSticker(stickers[0]);
+
+    stickers.forEach((el) => {
+      let dragging = false;
+      let moved = false;
+      let startX = 0, startY = 0;
+      let lastX = 0, lastY = 0;
+
+      el.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        moved = false;
+        el.classList.add('is-dragging');
+        el.setPointerCapture(e.pointerId);
+        const st = stickerState.get(el);
+        startX = e.clientX - st.x;
+        startY = e.clientY - st.y;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        st.vx = 0;
+        st.vy = 0;
+        selectSticker(el);
+      });
+
+      el.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        const st = stickerState.get(el);
+        const nx = e.clientX - startX;
+        const ny = e.clientY - startY;
+        if (Math.abs(nx - st.x) > 3 || Math.abs(ny - st.y) > 3) moved = true;
+        st.vx = (e.clientX - lastX) * 0.45;
+        st.vy = (e.clientY - lastY) * 0.45;
+        st.x = nx;
+        st.y = ny;
+        lastX = e.clientX;
+        lastY = e.clientY;
+        el.style.transform = `translate3d(${st.x}px, ${st.y}px, 0) rotate(${st.rot * 0.5}deg) scale(1.06)`;
+      });
+
+      const endDrag = () => {
+        if (!dragging) return;
+        dragging = false;
+        el.classList.remove('is-dragging');
+        if (!moved) selectSticker(el);
+      };
+      el.addEventListener('pointerup', endDrag);
+      el.addEventListener('pointercancel', endDrag);
+    });
+
+    if (scatterBtn) {
+      scatterBtn.addEventListener('click', () => {
+        stickers.forEach((el) => {
+          const st = stickerState.get(el);
+          st.vx = (Math.random() - 0.5) * 10;
+          st.vy = (Math.random() - 0.5) * 8;
+          st.rot = (Math.random() - 0.5) * 14;
+        });
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        stickers.forEach((el) => {
+          const st = stickerState.get(el);
+          const tilt = parseFloat(el.dataset.tilt || '0');
+          st.x = 0; st.y = 0; st.vx = 0; st.vy = 0; st.rot = tilt;
+          el.style.transform = `translate3d(0px, 0px, 0) rotate(${tilt}deg)`;
+        });
+      });
+    }
+
+    // Physics & Auto-scan ticker
+    gsap.ticker.add(() => {
+      if (xrayAuto) {
+        xrayAutoPhase += 0.025;
+        setXraySplit(0.5 + Math.sin(xrayAutoPhase) * 0.42);
+      }
+
+      if (!spArena) return;
+      const arenaRect = spArena.getBoundingClientRect();
+      stickers.forEach((el) => {
+        if (el.classList.contains('is-dragging')) return;
+        const st = stickerState.get(el);
+        if (Math.abs(st.vx) > 0.05 || Math.abs(st.vy) > 0.05) {
+          st.x += st.vx;
+          st.y += st.vy;
+          st.vx *= 0.91;
+          st.vy *= 0.91;
+
+          // Keep softly bounded inside arena
+          const maxX = Math.max(40, arenaRect.width * 0.22);
+          const maxY = Math.max(24, arenaRect.height * 0.22);
+          if (st.x > maxX || st.x < -maxX) { st.vx *= -0.65; st.x = Math.max(-maxX, Math.min(maxX, st.x)); }
+          if (st.y > maxY || st.y < -maxY) { st.vy *= -0.65; st.y = Math.max(-maxY, Math.min(maxY, st.y)); }
+
+          el.style.transform = `translate3d(${st.x.toFixed(1)}px, ${st.y.toFixed(1)}px, 0) rotate(${st.rot}deg)`;
+        }
+      });
+    });
+
+    // Framer-style Scroll-Linked 3D Perspective Entry on Telemetry Stages
+    gsap.utils.toArray('.case-visual').forEach((stage) => {
       gsap.fromTo(
-        el,
-        { opacity: 0.25, y: 16 },
+        stage,
+        { y: 50, rotateX: 8, opacity: 0.4 },
         {
-          opacity: 1,
           y: 0,
-          duration: 0.55,
-          ease: 'power3.out',
-          clearProps: 'transform',
-          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+          rotateX: 0,
+          opacity: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: stage,
+            start: 'top 95%',
+            end: 'top 45%',
+            scrub: true,
+          },
         }
       );
     });
 
-    setTimeout(() => ScrollTrigger.refresh(), 400);
+    const spineBeam = document.getElementById('spine-beam');
+    const spineWrap = document.getElementById('spine-wrap');
+    if (spineBeam && spineWrap) {
+      gsap.to(spineBeam, {
+        height: '100%',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: spineWrap,
+          start: 'top 72%',
+          end: 'bottom 68%',
+          scrub: true,
+        },
+      });
+    }
+
+    gsap.utils.toArray('.case-row').forEach((row) => {
+      gsap.fromTo(
+        row,
+        { opacity: 0, y: 34 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.75,
+          ease: 'power3.out',
+          clearProps: 'transform',
+          scrollTrigger: { trigger: row, start: 'top 86%', once: true },
+        }
+      );
+    });
+
+    gsap.utils.toArray('.spine-item').forEach((item) => {
+      gsap.fromTo(
+        item,
+        { opacity: 0, x: -24 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.65,
+          ease: 'power3.out',
+          clearProps: 'transform',
+          scrollTrigger: { trigger: item, start: 'top 86%', once: true },
+        }
+      );
+    });
+
+    setTimeout(() => ScrollTrigger.refresh(), 600);
   }
 
-  // ── 4. ABOUT DOSSIER TAB SWITCHER ───────────────────
-  const dossierData = {
-    cloud: {
-      code: 'ENV // AP-SOUTH-1',
-      tag: 'Infrastructure',
-      title: 'Hardened Linux & Elastic AWS',
-      desc: 'Provisioning Ubuntu/Debian EC2 instances with key-only SSH, segmented /24 CIDR subnets, EBS & S3 storage sync, and supervised systemd daemons.',
-      metrics: [
-        ['Compute', 'AWS EC2 · Ubuntu'],
-        ['Storage', 'EBS + S3 Sync'],
-        ['Init System', 'systemd units'],
-        ['Networking', 'CIDR /24 + UFW'],
-      ],
-    },
-    containers: {
-      code: 'RUNTIME // OCI-ALPINE',
-      tag: 'Orchestration',
-      title: 'Immutable Containers & K8s',
-      desc: 'Building minimal non-root Alpine images with multi-stage Dockerfiles, health checks, and declarative Kubernetes rollouts that self-heal.',
-      metrics: [
-        ['Base Image', 'Alpine non-root'],
-        ['Registry', 'Docker Hub'],
-        ['Scheduler', 'Kubernetes Pods'],
-        ['Strategy', 'RollingUpdate'],
-      ],
-    },
-    security: {
-      code: 'DEFENSE // ZERO-LATENCY',
-      tag: 'Security',
-      title: 'Client ML & Host Hardening',
-      desc: 'Combining local TensorFlow.js inference and Chrome DNR rules in Secure Flow with strict Linux privilege boundaries and TLS 1.3.',
-      metrics: [
-        ['Inference', 'TensorFlow.js Local'],
-        ['Enforcement', 'Chrome MV3 DNR'],
-        ['Intel', 'Safe Browsing + VT'],
-        ['Host Policy', 'ed25519 + NoNewPrivs'],
-      ],
-    },
-  };
-
-  const dTabs = document.querySelectorAll('.d-tab');
-  const dCode = document.getElementById('dossier-code');
-  const dTag = document.getElementById('dossier-tag');
-  const dTitle = document.getElementById('dossier-title');
-  const dDesc = document.getElementById('dossier-desc');
-  const dMetrics = document.getElementById('dossier-metrics');
-
-  dTabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
-      const key = tab.dataset.dossier;
-      const data = dossierData[key];
-      if (!data) return;
-
-      dTabs.forEach((t) => {
-        const active = t === tab;
-        t.classList.toggle('active', active);
-        t.setAttribute('aria-selected', active ? 'true' : 'false');
-      });
-
-      if (dCode) dCode.textContent = data.code;
-      if (dTag) dTag.textContent = data.tag;
-      if (dTitle) dTitle.textContent = data.title;
-      if (dDesc) dDesc.textContent = data.desc;
-      if (dMetrics) {
-        dMetrics.innerHTML = data.metrics
-          .map(([label, val]) => `<div class="dm-cell"><span>${label}</span><strong>${val}</strong></div>`)
-          .join('');
-      }
+  // ── 5. 3D TILT TELEMETRY STAGES ─────────────────────
+  document.querySelectorAll('.tilt-stage').forEach((stage) => {
+    stage.addEventListener('mousemove', (e) => {
+      const r = stage.getBoundingClientRect();
+      const x = e.clientX - r.left;
+      const y = e.clientY - r.top;
+      const rx = ((y - r.height / 2) / (r.height / 2)) * -6;
+      const ry = ((x - r.width / 2) / (r.width / 2)) * 6;
+      stage.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+    });
+    stage.addEventListener('mouseleave', () => {
+      stage.style.transform = 'perspective(900px) rotateX(0) rotateY(0)';
     });
   });
 
-  // ── 5. GALLERY / INDEX VIEW TOGGLE ──────────────────
-  const vtBtns = document.querySelectorAll('.vt-btn');
-  const galleryEl = document.getElementById('works-gallery');
-  const indexEl = document.getElementById('works-index');
+  // ── 6. REACTBITS SPOTLIGHT, TILTED IDENTITY & BEUI GLIDING PILLS ──
+  document.querySelectorAll('.spotlight-card').forEach((card) => {
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mouse-x', `${e.clientX - r.left}px`);
+      card.style.setProperty('--mouse-y', `${e.clientY - r.top}px`);
+    });
+  });
 
-  vtBtns.forEach((btn) => {
+  // ReactBits TiltedCard 3D perspective on #tilted-identity
+  const tiltedId = document.getElementById('tilted-identity');
+  if (tiltedId && window.innerWidth >= 768) {
+    tiltedId.addEventListener('mousemove', (e) => {
+      const r = tiltedId.getBoundingClientRect();
+      const x = e.clientX - r.left;
+      const y = e.clientY - r.top;
+      const rx = ((y - r.height / 2) / (r.height / 2)) * -5;
+      const ry = ((x - r.width / 2) / (r.width / 2)) * 5;
+      tiltedId.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      tiltedId.style.setProperty('--glare-x', `${(x / r.width) * 100}%`);
+      tiltedId.style.setProperty('--glare-y', `${(y / r.height) * 100}%`);
+    });
+    tiltedId.addEventListener('mouseleave', () => {
+      tiltedId.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+    });
+  }
+
+  // ReactBits PixelCanvas inside #tilted-identity
+  const pixelCanvas = document.getElementById('pixel-canvas');
+  if (tiltedId && pixelCanvas) {
+    const pctx = pixelCanvas.getContext('2d');
+    let pw = 0, ph = 0, pmx = -999, pmy = -999, pActive = false;
+    const resizePixel = () => {
+      const r = tiltedId.getBoundingClientRect();
+      pw = pixelCanvas.width = r.width;
+      ph = pixelCanvas.height = r.height;
+    };
+    resizePixel();
+    window.addEventListener('resize', resizePixel);
+    tiltedId.addEventListener('mouseenter', () => { pActive = true; });
+    tiltedId.addEventListener('mouseleave', () => { pActive = false; pmx = -999; pmy = -999; });
+    tiltedId.addEventListener('mousemove', (e) => {
+      const r = tiltedId.getBoundingClientRect();
+      pmx = e.clientX - r.left;
+      pmy = e.clientY - r.top;
+    });
+    const step = 16;
+    function drawPixels(time) {
+      pctx.clearRect(0, 0, pw, ph);
+      for (let x = 8; x < pw; x += step) {
+        for (let y = 8; y < ph; y += step) {
+          const dist = Math.hypot(x - pmx, y - pmy);
+          const wave = Math.sin(x * 0.04 + y * 0.04 + time * 0.002) * 0.5 + 0.5;
+          let alpha = 0.025 + wave * 0.025;
+          if (pActive && dist < 120) {
+            alpha += (1 - dist / 120) * 0.35;
+          }
+          pctx.fillStyle = `rgba(56, 189, 248, ${alpha})`;
+          pctx.fillRect(x, y, 3, 3);
+        }
+      }
+      requestAnimationFrame(drawPixels);
+    }
+    requestAnimationFrame(drawPixels);
+  }
+
+  // BEUI Gliding Pill Switcher
+  const glider = document.getElementById('pill-glider');
+  const pillBtns = document.querySelectorAll('.beui-pill');
+  const tabPanels = document.querySelectorAll('.beui-panels .tab-panel');
+  function moveGlider(btn) {
+    if (!glider || !btn) return;
+    glider.style.width = `${btn.offsetWidth}px`;
+    glider.style.transform = `translateX(${btn.offsetLeft - 4}px)`;
+  }
+  const activePill = document.querySelector('.beui-pill.active');
+  if (activePill) setTimeout(() => moveGlider(activePill), 80);
+  window.addEventListener('resize', () => moveGlider(document.querySelector('.beui-pill.active')));
+
+  pillBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
-      const view = btn.dataset.view;
-      vtBtns.forEach((b) => {
-        const isAct = b === btn;
-        b.classList.toggle('active', isAct);
-        b.setAttribute('aria-selected', isAct ? 'true' : 'false');
-      });
-      if (galleryEl && indexEl) {
-        galleryEl.classList.toggle('hidden', view !== 'gallery');
-        indexEl.classList.toggle('hidden', view !== 'index');
-      }
-      if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+      pillBtns.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      moveGlider(btn);
+      const target = btn.dataset.tab;
+      tabPanels.forEach((p) => p.classList.toggle('active', p.dataset.panel === target));
     });
   });
 
-  // ── 6. INTERACTIVE SYSTEMS ARCHITECTURE ─────────────
-  const archSpecs = {
-    git: {
-      file: 'git-workflow.sh',
-      tag: 'Source',
-      code: `git checkout -b feat/hardened-nginx\ngit commit -S -m "chore(infra): enforce tls 1.3"\ngit tag -a v2.4.0 -m "production release"\ngit push origin v2.4.0`,
-      note: 'Every push initiates reproducible container builds, automated health checks, and zero-downtime rollouts.',
-    },
-    docker: {
-      file: 'Dockerfile',
-      tag: 'Containers',
-      code: `FROM node:20-alpine AS runner\nRUN addgroup -S app && adduser -S app -G app\nCOPY --chown=app:app dist/ /srv/app/\nUSER app\nHEALTHCHECK CMD wget -qO- http://localhost:8080/healthz`,
-      note: 'Minimal non-root Alpine images keep the attack surface tight and cold-start times predictable.',
-    },
-    k8s: {
-      file: 'deployment.yaml',
-      tag: 'Orchestration',
-      code: `apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: edge-gateway\nspec:\n  replicas: 3\n  strategy:\n    type: RollingUpdate`,
-      note: 'Declarative replica sets with liveness probes automatically reschedule unhealthy pods.',
-    },
-    aws: {
-      file: 'ec2-provision.tf',
-      tag: 'Cloud',
-      code: `resource "aws_instance" "node" {\n  ami           = "ami-0f5ee92e2d63afc18"\n  instance_type = "t3.micro"\n  ebs_optimized = true\n  tags = { Region = "ap-south-1" }\n}`,
-      note: 'Provisioned in ap-south-1 with encrypted EBS volumes and automated S3 artifact backups.',
-    },
-    net: {
-      file: 'vpc-subnet.conf',
-      tag: 'Network',
-      code: `VPC_CIDR="192.168.0.0/16"\nPUBLIC_SUBNET="192.168.10.0/24"\nSSH_POLICY="ed25519 key-only, PasswordAuthentication no"\nFIREWALL="ufw allow 22/tcp, 443/tcp"`,
-      note: 'Segmented /24 subnets with strict ingress rules and key-only SSH authentication.',
-    },
-    linux: {
-      file: 'nginx-app.service',
-      tag: 'Kernel',
-      code: `[Unit]\nDescription=Hardened Reverse Proxy\nAfter=network-online.target\n[Service]\nRestart=always\nNoNewPrivileges=true\nProtectSystem=strict`,
-      note: 'Hardened systemd units supervise processes with capability bounding and automatic recovery.',
-    },
+  // ── 7. LIVE INTERACTIVE SHELL ───────────────────────
+  const termForm = document.getElementById('term-form');
+  const termInput = document.getElementById('term-input');
+  const termOutput = document.getElementById('term-output');
+
+  const commands = {
+    help: 'available: whoami, stack, status, aws, docker, clear',
+    whoami: 'ashwin biju — cloud & linux systems engineer (b.tech cse 2026, kerala)',
+    stack: 'linux (ubuntu/debian, systemd) | aws (ec2, s3, ebs) | docker | python | tf.js',
+    status: '[ok] open to entry-level devops, cloud support & linux sysadmin roles.',
+    aws: 'ec2 provisioning, ssh key-pair hardening, ebs volumes, s3 fundamentals.',
+    docker: 'container lifecycle, custom images, docker hub registry workflows.',
   };
 
-  const archItems = document.querySelectorAll('#arch-list .arch-item');
-  const aiFile = document.getElementById('ai-file');
-  const aiTag = document.getElementById('ai-tag');
-  const aiCode = document.getElementById('ai-code');
-  const aiNote = document.getElementById('ai-note');
+  function runTermCmd(raw) {
+    const cmd = raw.trim().toLowerCase();
+    if (!cmd) return;
+    if (cmd === 'clear') {
+      termOutput.innerHTML = '';
+      return;
+    }
+    const line1 = document.createElement('div');
+    line1.innerHTML = `<span class="t-prompt">$</span> ${cmd}`;
+    termOutput.appendChild(line1);
 
-  function selectArch(key) {
-    const spec = archSpecs[key];
-    if (!spec) return;
-    archItems.forEach((item) => item.classList.toggle('active', item.dataset.node === key));
-    if (aiFile) aiFile.textContent = spec.file;
-    if (aiTag) aiTag.textContent = spec.tag;
-    if (aiCode) aiCode.innerHTML = `<code>${spec.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>`;
-    if (aiNote) aiNote.textContent = spec.note;
+    const line2 = document.createElement('div');
+    line2.style.color = '#fafafa';
+    line2.textContent = commands[cmd] || `command not found: ${cmd}. try 'help'.`;
+    termOutput.appendChild(line2);
+    termOutput.scrollTop = termOutput.scrollHeight;
   }
 
-  archItems.forEach((item) => {
-    item.addEventListener('click', () => selectArch(item.dataset.node));
+  if (termForm) {
+    termForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      runTermCmd(termInput.value);
+      termInput.value = '';
+    });
+  }
+
+  document.querySelectorAll('.term-quick button').forEach((btn) => {
+    btn.addEventListener('click', () => runTermCmd(btn.dataset.cmd));
   });
 
-  // ── 7. CASE STUDY DIAGNOSTIC PROBES ─────────────────
+  // ── 8. CASE STUDY INTERACTIVE SIMULATORS ────────────
   const simSF = document.getElementById('sim-secureflow');
   const sfLog = document.getElementById('sf-log');
   const sfBadge = document.getElementById('sf-badge');
-  if (simSF && sfLog && sfBadge) {
+  if (simSF && sfLog) {
     simSF.addEventListener('click', () => {
-      sfBadge.textContent = 'Intercepting';
-      sfLog.textContent = '> [TF.JS] Malicious redirect score: 0.96 -> BLOCKED via DNR (1.4ms)';
-      setTimeout(() => { sfBadge.textContent = 'Shield Armed'; }, 2400);
+      sfBadge.textContent = 'INTERCEPTING';
+      sfLog.textContent = '> [TF.JS] Malicious redirect score: 0.96 -> BLOCKED via DNR';
+      setTimeout(() => { sfBadge.textContent = 'SHIELD ARMED'; }, 2400);
     });
   }
 
   const simCL = document.getElementById('sim-cloudlab');
   const clLog = document.getElementById('cl-log');
   const clBadge = document.getElementById('cl-badge');
-  if (simCL && clLog && clBadge) {
+  if (simCL && clLog) {
     simCL.addEventListener('click', () => {
-      clBadge.textContent = 'Probing';
+      clBadge.textContent = 'PROBING...';
       clLog.textContent = '> [OK] systemd: 42 units active | docker: 2 running | s3: synced';
-      setTimeout(() => { clBadge.textContent = 'EC2 Healthy'; }, 2400);
+      setTimeout(() => { clBadge.textContent = 'EC2 HEALTHY'; }, 2400);
     });
   }
 
-  // ── 8. COMMAND PALETTE (⌘K) ─────────────────────────
+  // ── 9. COMMAND PALETTE (⌘K / Ctrl+K) ────────────────
   const cmdBackdrop = document.getElementById('cmd-backdrop');
   const cmdTrigger = document.getElementById('cmd-trigger');
   const cmdInput = document.getElementById('cmd-input');
@@ -300,7 +646,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function toggleCmd(open) {
     if (!cmdBackdrop) return;
     cmdBackdrop.classList.toggle('open', open);
-    cmdBackdrop.setAttribute('aria-hidden', open ? 'false' : 'true');
     if (open && cmdInput) {
       cmdInput.value = '';
       cmdItems.forEach((i) => (i.style.display = 'flex'));
@@ -340,7 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (action === 'scroll') scrollToTarget(item.dataset.target);
       else if (action === 'copy') {
         navigator.clipboard?.writeText(item.dataset.value);
-        showToast('ashcreations218@gmail.com copied');
+        showToast('Email copied to clipboard');
       } else if (action === 'link') {
         window.open(item.dataset.url, '_blank', 'noopener,noreferrer');
       }
@@ -355,8 +700,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Back to Top Button
   const btnBackToTop = document.getElementById('btn-back-to-top');
   if (btnBackToTop) {
-    btnBackToTop.addEventListener('click', () => scrollToTarget('#hero'));
+    btnBackToTop.addEventListener('click', () => {
+      scrollToTarget('#hero-stage-wrap');
+    });
+  }
+
+  // ── 10. MAGNETIC BUTTONS & DOCK MAGNIFICATION ───────
+  if (window.innerWidth >= 768) {
+    document.querySelectorAll('.magnetic').forEach((btn) => {
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width / 2)) * 0.2;
+        const dy = (e.clientY - (r.top + r.height / 2)) * 0.2;
+        btn.style.transform = `translate(${dx}px, ${dy}px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'translate(0, 0)';
+      });
+    });
+
+    const dock = document.getElementById('dock');
+    const dockItems = document.querySelectorAll('.dock-item');
+    if (dock && dockItems.length) {
+      dock.addEventListener('mousemove', (e) => {
+        dockItems.forEach((item) => {
+          const r = item.getBoundingClientRect();
+          const dist = Math.abs(e.clientX - (r.left + r.width / 2));
+          const scale = Math.max(1, 1.38 - dist / 140);
+          item.style.transform = `translateY(${-(scale - 1) * 14}px) scale(${scale})`;
+        });
+      });
+      dock.addEventListener('mouseleave', () => {
+        dockItems.forEach((item) => {
+          item.style.transform = 'translateY(0) scale(1)';
+        });
+      });
+    }
   }
 });
